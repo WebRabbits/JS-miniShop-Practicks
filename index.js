@@ -123,7 +123,7 @@ function renderGoods() {
   `;
 }
 
-// Функция, которая возвращает контент на странице "Корзина"
+// Функция, которая возвращает контент на странице "Корзина"1
 function renderCart() {
   return `
     <div data-active-tab-content="true" class="cart-items">
