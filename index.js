@@ -1,5 +1,7 @@
 'use script';
 
+console.log(TEST);
+
 // TODO: Реализация активации таба при переключении. Добавление класса .active к активному выбранному табу.
 
 let activeTabId = 'goods';
