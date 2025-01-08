@@ -1,6 +1,6 @@
 'use script';
 
-console.log(TEST);
+console.log(GOODS);
 
 // TODO: Реализация активации таба при переключении. Добавление класса .active к активному выбранному табу.
 
@@ -56,11 +56,13 @@ function getActiveTab() {
 function renderTabContentById(tabId) {
   const tabsContainer = document.querySelector('.tabs');
 
-  let html = '';
-
-  tabId == 'goods' ? (html = renderGoods()) : (html = renderCart());
-
-  tabsContainer.insertAdjacentHTML('afterend', html);
+  if (tabId === 'goods') {
+    const html = renderGoods();
+    tabsContainer.after(html);
+  } else {
+    const html = renderCart();
+    tabsContainer.insertAdjacentHTML('afterend', html);
+  }
 }
 
 // Массив для пополнения при добавлении нового товара в корзину
@@ -68,61 +70,62 @@ const goodsInCart = new Array();
 
 const tabWithCounter = document.querySelector('button[data-goods-count]');
 
-const addInCartButtons = document.querySelectorAll(
-  'button[data-add-in-cart="true"]'
-);
+// const addInCartButtons = document.querySelectorAll(
+//   'button[data-add-in-cart="true"]'
+// );
 
-// Вызываем слушатель события нажатия на кнопку "В КОРЗИНУ" у соответствующего товара
-addClickListener(addInCartButtons, addInCartHandler);
+// // Вызываем слушатель события нажатия на кнопку "В КОРЗИНУ" у соответствующего товара
+// addClickListener(addInCartButtons, addInCartHandler);
 
-// Функция добавления товара в корзину
-function addInCartHandler(event) {
-  const product = createProduct();
+// Функция добавления товара в корзину по нажатию на кнопку "В КОРЗИНУ"
+function addInCartHandler(product) {
   goodsInCart.push(product);
 
+  console.log(goodsInCart);
   tabWithCounter.dataset.goodsCount = goodsInCart.length;
 }
 
 // Функция, которая создаёт объект товара по его названию/цене для добавления в массив goodsInCart - то есть в корзину
-function createProduct() {
+function createProduct(product) {
   return {
-    name: 'Уроки по HTML',
-    price: 500,
+    name: product.name ? product.name : 'Имя неизвестно',
+    price: product.price ? product.price : null,
+    imgSrc: product.imgSrc ? product.imgSrc : 'goods/default.jpg',
   };
 }
 
 // Функция, которая возвращает контент на странице "Товары"
 function renderGoods() {
-  return `
-    <div data-active-tab-content="true" class="product-items">
-      <div class="product-item">
-          <img src="goods/html.png">
-        <div class="product-list">
-            <h3>Уроки по HTML</h3>
-              <p class="price">₽ 300</p>
-              <button data-add-in-cart="true" class="button">В корзину</button>
-        </div>
-      </div>
+  const div = document.createElement('div');
+  div.dataset.activeTabContent = 'true';
+  div.className = 'product-items';
 
-      <div class="product-item">
-          <img src="goods/css.png">
-        <div class="product-list">
-            <h3>Уроки по CSS</h3>
-              <p class="price">₽ 150</p>
-              <button data-add-in-cart="true" class="button">В корзину</button>
-        </div>
-      </div>
+  GOODS.forEach((product) => {
+    product = createProduct(product);
+    const button = document.createElement('button');
+    button.className = 'button';
+    button.innerText = 'В корзину';
+    button.addEventListener('click', () => {
+      addInCartHandler(product);
+    });
 
-      <div class="product-item">
-          <img src="goods/js.png">
-        <div class="product-list">
-            <h3>Уроки по JS</h3>
-              <p class="price">₽ 260</p>
-              <button data-add-in-cart="true" class="button">В корзину</button>
-        </div>
+    const productBlock = document.createElement('div');
+    productBlock.className = 'product-item';
+    productBlock.innerHTML = `
+      <img src="${product.imgSrc}">
+      <div class="product-list">
+        <h3>${product.name}</h3>
+        <p class="price">₽ ${product.price}</p>
       </div>
-    </div>
-  `;
+    `;
+
+    productBlock.querySelector('.product-list').append(button);
+    console.log(productBlock);
+
+    if (product.price !== null) return div.append(productBlock);
+  });
+
+  return div;
 }
 
 // Функция, которая возвращает контент на странице "Корзина"1
