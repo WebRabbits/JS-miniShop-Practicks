@@ -56,17 +56,20 @@ function getActiveTab() {
 function renderTabContentById(tabId) {
   const tabsContainer = document.querySelector('.tabs');
 
+  let html = null;
   if (tabId === 'goods') {
-    const html = renderGoods();
-    tabsContainer.after(html);
+    html = renderGoods();
   } else {
-    const html = renderCart();
-    tabsContainer.insertAdjacentHTML('afterend', html);
+    html = renderCart();
   }
+
+  html !== null
+    ? tabsContainer.after(html)
+    : 'Что-то пошло не так: 404 Page Not Found';
 }
 
 // Массив для пополнения при добавлении нового товара в корзину
-const goodsInCart = new Array();
+let goodsInCart = new Array();
 
 const tabWithCounter = document.querySelector('button[data-goods-count]');
 
@@ -79,15 +82,65 @@ const tabWithCounter = document.querySelector('button[data-goods-count]');
 
 // Функция добавления товара в корзину по нажатию на кнопку "В КОРЗИНУ"
 function addInCartHandler(product) {
-  goodsInCart.push(product);
+  let hasProduct = false;
+  let index = null;
+  let count = 1;
+
+  for (let i = 0; i < goodsInCart.length; i++) {
+    const productInCart = goodsInCart[i];
+    if (product.id == productInCart.id) {
+      hasProduct = true;
+      index = i;
+      count = productInCart.count;
+    }
+  }
+
+  if (hasProduct) {
+    goodsInCart[index].count = ++count;
+  } else {
+    const productWithCount = product;
+    productWithCount.count = count;
+    goodsInCart.push(productWithCount);
+  }
 
   console.log(goodsInCart);
   tabWithCounter.dataset.goodsCount = goodsInCart.length;
 }
 
+function removeInCartHandler(productId) {
+  console.log(productId);
+
+  const newGoodsInCart = new Array();
+
+  for (let i = 0; i < goodsInCart.length; i++) {
+    const product = goodsInCart[i];
+
+    if (productId == product.id) {
+      if (product.count > 1) {
+        newGoodsInCart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          imgSrc: product.imgSrc,
+          count: --product.count,
+        });
+      }
+    } else {
+      newGoodsInCart.push(product);
+    }
+  }
+
+  goodsInCart = newGoodsInCart;
+
+  console.log(goodsInCart);
+}
+
+function updateCartItem(id) {}
+
 // Функция, которая создаёт объект товара по его названию/цене для добавления в массив goodsInCart - то есть в корзину
 function createProduct(product) {
   return {
+    id: product.id,
     name: product.name ? product.name : 'Имя неизвестно',
     price: product.price ? product.price : null,
     imgSrc: product.imgSrc ? product.imgSrc : 'goods/default.jpg',
@@ -130,25 +183,32 @@ function renderGoods() {
 
 // Функция, которая возвращает контент на странице "Корзина"1
 function renderCart() {
-  return `
-    <div data-active-tab-content="true" class="cart-items">
-      <div class="cart-item">
-          <div class="cart-item-title">Уроки по HTML</div>
-          <div class="cart-item-count">3шт.</div>
-          <div class="cart-item-price">₽ 150</div>
-      </div>
+  const divCartItems = document.createElement('div');
+  divCartItems.className = 'cart-items';
+  divCartItems.dataset.activeTabContent = 'true';
 
-      <div class="cart-item">
-          <div class="cart-item-title">Уроки по CSS</div>
-          <div class="cart-item-count">1шт.</div>
-          <div class="cart-item-price">₽ 450</div>
-      </div>
+  goodsInCart.forEach((good) => {
+    console.log(good);
+    const divCartItem = document.createElement('div');
+    divCartItem.className = 'cart-item';
+    divCartItem.innerHTML = `
+      <div class="cart-item-title">${good.name}</div>
+      <div class="cart-item-count">${good.count}шт.</div>
+      <div class="cart-item-price">₽ ${good.price}</div>
+    `;
 
-      <div class="cart-item">
-          <div class="cart-item-title">Уроки по JS</div>
-          <div class="cart-item-count">6шт.</div>
-          <div class="cart-item-price">₽ 550</div>
-      </div>
-    </div>
-  `;
+    const buttonDelete = document.createElement('button');
+    buttonDelete.className = 'cart-item-delete';
+    buttonDelete.textContent = 'x';
+    buttonDelete.addEventListener('click', () => {
+      removeInCartHandler(good.id);
+    });
+
+    divCartItem.append(buttonDelete);
+
+    divCartItems.append(divCartItem);
+  });
+
+  // console.log(divCartItems);
+  return divCartItems;
 }

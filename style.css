@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 body {
@@ -111,9 +112,20 @@ body {
 
 .cart-item {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: start;
 }
 
 .cart-item-price {
   font-weight: bold;
+}
+
+.cart-item-delete {
+  width: 10px;
+  height: 10px;
+  border: none;
+  background: repeat;
+  color: red;
+  font-weight: 600;
+  cursor: pointer;
 }
