@@ -80,11 +80,25 @@ const tabWithCounter = document.querySelector('button[data-goods-count]');
 // // Вызываем слушатель события нажатия на кнопку "В КОРЗИНУ" у соответствующего товара
 // addClickListener(addInCartButtons, addInCartHandler);
 
+function counterUpdater() {
+  let fullSize = 0;
+
+  for (let i = 0; i < goodsInCart.length; i++) {
+    const productInCart = goodsInCart[i];
+    fullSize += productInCart.count;
+  }
+
+  tabWithCounter.dataset.goodsCount = fullSize;
+  return tabWithCounter;
+}
+
 // Функция добавления товара в корзину по нажатию на кнопку "В КОРЗИНУ"
 function addInCartHandler(product) {
+  console.log(product);
   let hasProduct = false;
   let index = null;
   let count = 1;
+  let price = product.price;
 
   for (let i = 0; i < goodsInCart.length; i++) {
     const productInCart = goodsInCart[i];
@@ -97,14 +111,14 @@ function addInCartHandler(product) {
 
   if (hasProduct) {
     goodsInCart[index].count = ++count;
+    goodsInCart[index].price += price;
   } else {
     const productWithCount = product;
     productWithCount.count = count;
     goodsInCart.push(productWithCount);
   }
 
-  console.log(goodsInCart);
-  tabWithCounter.dataset.goodsCount = goodsInCart.length;
+  counterUpdater();
 }
 
 function removeInCartHandler(productId) {
@@ -122,20 +136,36 @@ function removeInCartHandler(productId) {
           name: product.name,
           price: product.price,
           imgSrc: product.imgSrc,
-          count: --product.count,
+          count: product.count - 1,
         });
       }
+      updateCartItem(product.id, product.count, product.price);
     } else {
       newGoodsInCart.push(product);
     }
   }
 
   goodsInCart = newGoodsInCart;
-
   console.log(goodsInCart);
+  counterUpdater();
 }
 
-function updateCartItem(id) {}
+function updateCartItem(id, count, price) {
+  const cartItem = document.querySelector(`[data-element-id="${id}"]`);
+  const cartItemCount = document.querySelector('.cart-item-count');
+  const cartItemPrice = document.querySelector('.cart-item-price');
+  console.dir(cartItemCount);
+
+  console.log(count);
+  if (count > 1) {
+    console.log(price);
+    cartItemCount.textContent = `${count - 1}шт.`;
+    cartItemPrice.textContent = `₽ ${price - price}`;
+  } else {
+    cartItem.remove();
+  }
+  console.log(cartItem);
+}
 
 // Функция, которая создаёт объект товара по его названию/цене для добавления в массив goodsInCart - то есть в корзину
 function createProduct(product) {
@@ -190,6 +220,7 @@ function renderCart() {
   goodsInCart.forEach((good) => {
     console.log(good);
     const divCartItem = document.createElement('div');
+    divCartItem.dataset.elementId = good.id;
     divCartItem.className = 'cart-item';
     divCartItem.innerHTML = `
       <div class="cart-item-title">${good.name}</div>
