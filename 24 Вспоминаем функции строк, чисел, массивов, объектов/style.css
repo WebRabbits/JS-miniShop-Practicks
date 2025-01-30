@@ -1,0 +1,49 @@
+* {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.cart-game {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid peru;
+  border-radius: 7px;
+  margin: 7px;
+  padding: 5px;
+}
+
+.cart-game .title {
+  font-size: 21px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.title a {
+  text-decoration: none;
+}
+
+.desc {
+  font-size: 17px;
+  border-bottom: 1px solid #0f0f0f;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+.price {
+  font-size: 22px;
+  color: blueviolet;
+}
+
+.price:after {
+  content: '\20BD';
+}
+
+.category {
+  margin-top: 5px;
+  word-break: break-word;
+}
