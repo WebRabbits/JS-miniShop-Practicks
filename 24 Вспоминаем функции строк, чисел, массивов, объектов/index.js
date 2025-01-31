@@ -209,12 +209,19 @@ formattedGames.forEach((game) => {
 
   const title = document.createElement('p');
   title.classList = 'title';
+
   const description = document.createElement('span');
   description.innerHTML = game.description;
   description.classList = 'desc';
-  const link = document.createElement('a');
-  link.innerText = game.name;
-  link.href = game.link ? game.link : '#';
+
+  if (game.link) {
+    const link = document.createElement('a');
+    link.innerText = game.name;
+    link.href = game.link;
+    title.append(link);
+  } else {
+    title.innerText = game.name;
+  }
 
   const price = document.createElement('span');
   price.classList = 'price';
@@ -229,7 +236,6 @@ formattedGames.forEach((game) => {
 
   divContainer.append(cartGame);
   cartGame.append(title, description, price, category);
-  title.append(link);
 });
 
 document.body.append(divContainer);
