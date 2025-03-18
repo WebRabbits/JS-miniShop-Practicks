@@ -281,3 +281,16 @@ function getMinMax(arr) {
  */
 
 console.log(getMinMax([2, 1, 3, 5, '-12', false, 55]));
+
+console.log(`============== Задача №12.`);
+// Заменить все гласные символы (aeiouAEIOU) в переданной строке на восклицательный знак
+// Решается регулярным выражением
+
+function replace(s) {
+  return s.replace(/[aeiou]/gi, '!');
+}
+
+console.log(replace('Hi!'));
+console.log(replace('!Hi! Hi!'));
+console.log(replace('aeiou'));
+console.log(replace('ABCDE'));
